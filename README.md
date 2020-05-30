@@ -6,6 +6,7 @@ Standart Stack:
 - ElasticSearch - search engine
 - Logstash - unified source processor
 - Kibana - UI for all metrics in ELK stack
+
 Additional tools:
 - filebeat - logs source readeer
 
