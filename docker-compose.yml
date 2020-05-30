@@ -1,0 +1,28 @@
+version: '3.3'
+
+services:
+
+  monitoring-elk:
+    build: elk
+    restart: unless-stopped
+    environment:
+      - ES_CONNECT_RETRY=60
+    #    volumes:
+    #      - ./elk/logstash/02-beats-input.conf:/etc/logstash/conf.d/02-beats-input.conf
+    #      - ./elk/logstash/30-output.conf:/etc/logstash/conf.d/30-output.conf
+    ports:
+      - 5601:5601
+      - 9200:9200
+      - 5044:5044
+
+  monitoring-filebeat:
+    build: filebeat
+    restart: unless-stopped
+    volumes:
+      # - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers/:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # required - user with permissions for reading logs from docker vm
+    user: root
+    depends_on:
+      - monitoring-elk

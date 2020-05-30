@@ -1,0 +1,37 @@
+# source configuration
+filebeat:
+  inputs:
+    # get data from docker container
+    - type: container
+      format: auto
+      paths:
+        - '/var/lib/docker/containers/*/*.log'
+
+# additional processors for filebeat data
+processors:
+  # add docker metadata such as container name/ container image name
+  - add_docker_metadata: ~
+  # json rules parsing
+  - decode_json_fields:
+      fields: "message"
+      target: "json"
+      overwrite_keys: true
+      process_array: true
+  # additional rules
+#  - drop_event:
+#      when:
+#        not:
+#          contains:
+#            container.image.name: "some-image"
+
+setup.kibana:
+  host: "monitoring-elk:5601"
+
+output.logstash:
+  hosts: "monitoring-elk:5044"
+  index: filebeat
+
+#output.console:
+#  pretty: true
+
+logging.metrics.enabled: false
